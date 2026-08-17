@@ -1,0 +1,22 @@
+# NUNCA subir credenciales (repo publico = todos verian las llaves)
+.env
+*.env
+!.env.example
+
+# Respaldos de base de datos
+*.sql
+respaldo*
+backup*
+
+# Logs
+*.log
+
+# Archivos temporales de Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
