@@ -1,0 +1,56 @@
+name: Actualizar datos
+
+# Se ejecuta de dos formas:
+#   1. Solo (horario): cada 3 horas, sin fechas -> trae los ultimos dias.
+#   2. Manual (boton "Run workflow"): con fechas opcionales para admins.
+on:
+  schedule:
+    - cron: "0 */3 * * *"   # cada 3 horas (UTC). Cambiar aqui el horario.
+  workflow_dispatch:
+    inputs:
+      date_from:
+        description: "Fecha inicio (YYYY-MM-DD). Vacio = ultimos dias."
+        required: false
+        default: ""
+      date_to:
+        description: "Fecha fin (YYYY-MM-DD). Vacio = hoy."
+        required: false
+        default: ""
+
+jobs:
+  etl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el codigo
+        uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: pip install pandas pymysql requests python-dotenv tzdata
+
+      - name: Correr el ETL
+        env:
+          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+          MYSQL_SSL: "1"
+          CUBBO_API_KEY: ${{ secrets.CUBBO_API_KEY }}
+          ROUTAL_PRIVATE_KEY: ${{ secrets.ROUTAL_PRIVATE_KEY }}
+          ROUTAL_PROJECT_ID: ${{ secrets.ROUTAL_PROJECT_ID }}
+          DATE_FROM: ${{ github.event.inputs.date_from }}
+          DATE_TO: ${{ github.event.inputs.date_to }}
+        run: python etl_cubo2.py
+
+      - name: Guardar el log como evidencia
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: log-etl
+          path: etl_cubo.log
+          if-no-files-found: ignore
