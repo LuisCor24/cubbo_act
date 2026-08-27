@@ -1,11 +1,18 @@
 name: Actualizar datos
 
 # Se ejecuta de dos formas:
-#   1. Solo (horario): cada 3 horas, sin fechas -> trae los ultimos dias.
-#   2. Manual (boton "Run workflow"): con fechas opcionales para admins.
+#   1. Automático: 4 veces al día en horario CDMX:
+#      8:30 am, 12:00 pm, 3:00 pm y 5:00 pm.
+#   2. Manual: botón "Run workflow", con fechas opcionales para admins.
 on:
   schedule:
-    - cron: "0 */3 * * *"   # cada 3 horas (UTC). Cambiar aqui el horario.
+    # GitHub Actions usa UTC.
+    # CDMX = UTC-6
+    - cron: "30 14 * * *"  # 8:30 am CDMX
+    - cron: "0 18 * * *"   # 12:00 pm CDMX
+    - cron: "0 21 * * *"   # 3:00 pm CDMX
+    - cron: "0 23 * * *"   # 5:00 pm CDMX
+
   workflow_dispatch:
     inputs:
       date_from:
@@ -20,6 +27,7 @@ on:
 jobs:
   etl:
     runs-on: ubuntu-latest
+
     steps:
       - name: Descargar el codigo
         uses: actions/checkout@v4
