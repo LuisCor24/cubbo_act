@@ -6,12 +6,10 @@ name: Actualizar datos
 #   2. Manual: botón "Run workflow", con fechas opcionales para admins.
 on:
   schedule:
-    # GitHub Actions usa UTC.
-    # CDMX = UTC-6
-    - cron: "30 14 * * *"  # 8:30 am CDMX
-    - cron: "0 18 * * *"   # 12:00 pm CDMX
-    - cron: "0 21 * * *"   # 3:00 pm CDMX
-    - cron: "0 23 * * *"   # 5:00 pm CDMX
+    - cron: "35 14 * * *"  # 8:35 am CDMX
+    - cron: "5 18 * * *"   # 12:05 pm CDMX
+    - cron: "5 21 * * *"   # 3:05 pm CDMX
+    - cron: "5 23 * * *"   # 5:05 pm CDMX
 
   workflow_dispatch:
     inputs:
